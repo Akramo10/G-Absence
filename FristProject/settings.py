@@ -43,15 +43,15 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     #'authentication',
     'auth_api',
+    'etudiants_app',  # Nouvelle application pour la gestion des étudiants
 ]
 
 # Commenté temporairement pour éviter les erreurs
 # AUTH_USER_MODEL = 'App1.UtilisateurAdmin'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [],  # Désactiver l'authentification par défaut de DRF
+    'DEFAULT_PERMISSION_CLASSES': [],      # Désactiver les permissions par défaut de DRF
 }
 
 from datetime import timedelta

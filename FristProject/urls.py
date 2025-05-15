@@ -24,4 +24,6 @@ urlpatterns = [
     # path('api/auth/', include('authentication.urls')),  # Temporairement désactivé
     # Nouvelle API d'authentification avec requêtes SQL brutes
     path('api/auth-sql/', include('auth_api.urls')),
+    # Gestion des étudiants, filières et départements
+    path('api/admin/', include('etudiants_app.urls')),
 ]

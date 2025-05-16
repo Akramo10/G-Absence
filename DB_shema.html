@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Schéma de la Base de Données - Gestion des Absences</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .foreign-key {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📘 Schéma de la Base de Données : Gestion des Absences</h1>
+
+<div class="diagram-container">
+    <h2>🔗 Diagramme des Relations</h2>
+    <div class="mermaid">
+    erDiagram
+        UTILISATEUR ||--o{ ENSEIGNANT : has
+        DEPARTEMENT ||--o{ FILIERE : contains
+        FILIERE ||--o{ ETUDIANT : enrolls
+        MODULE ||--o{ ELEMENT_MODULE : contains
+        ENSEIGNANT ||--o{ ELEMENT_MODULE : teaches
+        ETUDIANT ||--o{ INSCRIPTION_ELEMENT : enrolls
+        SEANCE ||--o{ SESSION_QR : generates
+        SEANCE ||--o{ PRESENCE : records
+        PRESENCE ||--o{ NOTIFICATION_EMAIL : triggers
+        SEANCE ||--o{ RAPPORT_PRESENCE : generates
+    </div>
+</div>
+
+<h2>utilisateur</h2>
+<table>
+<tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+<tr><td>id_utilisateur</td><td>SERIAL</td><td>Clé primaire</td></tr>
+<tr><td>nom_utilisateur</td><td>VARCHAR(50)</td><td>Identifiant de connexion</td></tr>
+<tr><td>mot_de_passe_hash</td><td>VARCHAR(255)</td><td>Mot de passe hashé</td></tr>
+<tr><td>email</td><td>VARCHAR(100)</td><td>Email unique</td></tr>
+<tr><td>type_utilisateur</td><td>ENUM</td><td>'admin' ou 'enseignant'</td></tr>
+</table>
+
+<h2>departement</h2>
+<table>
+<tr><th>Champ</th><th>Type</th></tr>
+<tr><td>id_departement</td><td>SERIAL</td></tr>
+<tr><td>nom_departement</td><td>VARCHAR(100)</td></tr>
+<tr><td>description</td><td>TEXT</td></tr>
+</table>
+
+<h2>filiere</h2>
+<table>
+<tr><th>Champ</th><th>Type</th></tr>
+<tr><td>id_filiere</td><td>SERIAL</td></tr>
+<tr><td>nom_filiere</td><td>VARCHAR(100)</td></tr>
+<tr><td>description</td><td>TEXT</td></tr>
+<tr><td>annee_academique</td><td>VARCHAR(20)</td></tr>
+<tr><td>id_departement</td><td>INT (FK)</td></tr>
+</table>
+
+<h2>enseignant</h2>
+<table>
+<tr><th>Champ</th><th>Type</th></tr>
+<tr><td>id_enseignant</td><td>SERIAL</td></tr>
+<tr><td>nom</td><td>VARCHAR(50)</td></tr>
+<tr><td>prenom</td><td>VARCHAR(50)</td></tr>
+<tr><td>telephone</td><td>VARCHAR(20)</td></tr>
+<tr><td>specialite</td><td>VARCHAR(100)</td></tr>
+<tr><td>id_utilisateur</td><td>INT (FK)</td></tr>
+</table>
+
+<h2>etudiant</h2>
+<table>
+<tr><th>Champ</th><th>Type</th></tr>
+<tr><td>id_etudiant</td><td>SERIAL</td></tr>
+<tr><td>code_apogee</td><td>VARCHAR(20)</td></tr>
+<tr><td>nom</td><td>VARCHAR(50)</td></tr>
+<tr><td>prenom</td><td>VARCHAR(50)</td></tr>
+<tr><td>email</td><td>VARCHAR(100)</td></tr>
+<tr><td>telephone</td><td>VARCHAR(20)</td></tr>
+<tr><td>annee</td><td>INT (1-5)</td></tr>
+<tr><td>id_filiere</td><td>INT (FK)</td></tr>
+</table>
+
+<h2>module</h2>
+<table>
+<tr><th>Champ</th><th>Type</th></tr>
+<tr><td>id_module</td><td>SERIAL</td></tr>
+<tr><td>code_module</td><td>VARCHAR(20)</td></tr>
+<tr><td>nom_module</td><td>VARCHAR(100)</td></tr>
+<tr><td>description</td><td>TEXT</td></tr>
+<tr><td>coefficient</td><td>NUMERIC(4,2)</td></tr>
+<tr><td>semestre</td><td>INT (1-6)</td></tr>
+</table>
+
+<h2>element_module</h2>
+<table>
+<tr><th>Champ</th><th>Type</th></tr>
+<tr><td>id_element</td><td>SERIAL</td></tr>
+<tr><td>nom_element</td><td>VARCHAR(100)</td></tr>
+<tr><td>coefficient</td><td>NUMERIC(4,2)</td></tr>
+<tr><td>volume_horaire</td><td>INT</td></tr>
+<tr><td>semestre</td><td>INT</td></tr>
+<tr><td>id_module</td><td>INT (FK)</td></tr>
+<tr><td>id_enseignant</td><td>INT (FK)</td></tr>
+</table>
+
+<h2>inscription_element</h2>
+<table>
+<tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+<tr><td>id_inscription</td><td>SERIAL</td><td>Clé primaire</td></tr>
+<tr><td>id_etudiant</td><td>INT</td><td>Référence à l'étudiant (FK)</td></tr>
+<tr><td>id_element</td><td>INT</td><td>Référence à l’élément de module (FK)</td></tr>
+<tr><td>date_inscription</td><td>DATE</td><td>Date de l'inscription</td></tr>
+</table>
+
+<h2>seance</h2>
+<table>
+<tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+<tr><td>id_seance</td><td>SERIAL</td><td>Identifiant unique</td></tr>
+<tr><td>date_seance</td><td>DATE</td><td>Date de la séance</td></tr>
+<tr><td>heure_debut</td><td>TIME</td><td>Heure de début</td></tr>
+<tr><td>heure_fin</td><td>TIME</td><td>Heure de fin</td></tr>
+<tr><td>type_seance</td><td>ENUM</td><td>CM, TD ou TP</td></tr>
+<tr><td>salle</td><td>VARCHAR(50)</td><td>Salle où se déroule la séance</td></tr>
+<tr><td>id_element</td><td>INT</td><td>Référence à l’élément de module (FK)</td></tr>
+<tr><td>id_enseignant</td><td>INT</td><td>Référence à l’enseignant (FK)</td></tr>
+</table>
+
+<h2>session_qr</h2>
+<table>
+<tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+<tr><td>id_session_qr</td><td>SERIAL</td><td>Identifiant unique</td></tr>
+<tr><td>code_qr</td><td>VARCHAR(255)</td><td>Code QR généré</td></tr>
+<tr><td>url_session</td><td>VARCHAR(255)</td><td>URL liée au QR</td></tr>
+<tr><td>timestamp_creation</td><td>TIMESTAMP</td><td>Horodatage de création</td></tr>
+<tr><td>timestamp_expiration</td><td>TIMESTAMP</td><td>Date/heure d'expiration</td></tr>
+<tr><td>actif</td><td>BOOLEAN</td><td>QR actif ou non</td></tr>
+<tr><td>id_seance</td><td>INT</td><td>Référence à la séance (FK)</td></tr>
+<tr><td>id_enseignant</td><td>INT</td><td>Référence à l’enseignant (FK)</td></tr>
+</table>
+
+<h2>presence</h2>
+<table>
+<tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+<tr><td>id_presence</td><td>SERIAL</td><td>Clé primaire</td></tr>
+<tr><td>timestamp_marquage</td><td>TIMESTAMP</td><td>Date de marquage</td></tr>
+<tr><td>statut</td><td>ENUM</td><td>present, absent, non_verifie</td></tr>
+<tr><td>justifiee</td><td>BOOLEAN</td><td>Absence justifiée ou non</td></tr>
+<tr><td>id_etudiant</td><td>INT</td><td>Référence à l’étudiant (FK)</td></tr>
+<tr><td>id_seance</td><td>INT</td><td>Référence à la séance (FK)</td></tr>
+<tr><td>id_session_qr</td><td>INT</td><td>Référence à la session QR (FK)</td></tr>
+</table>
+
+<h2>rapport_presence</h2>
+<table>
+<tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+<tr><td>id_rapport</td><td>SERIAL</td><td>Identifiant du rapport</td></tr>
+<tr><td>date_generation</td><td>TIMESTAMP</td><td>Date de création du rapport</td></tr>
+<tr><td>chemin_fichier</td><td>VARCHAR(255)</td><td>Chemin du fichier PDF</td></tr>
+<tr><td>envoye</td><td>BOOLEAN</td><td>Rapport envoyé ou non</td></tr>
+<tr><td>id_enseignant</td><td>INT</td><td>Référence à l’enseignant (FK)</td></tr>
+<tr><td>id_element</td><td>INT</td><td>Référence à l’élément de module (FK)</td></tr>
+<tr><td>id_seance</td><td>INT</td><td>Référence à la séance (FK)</td></tr>
+</table>
+
+<!-- ...existing code... -->
+
+<h2>notification_email</h2>
+<table>
+<tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+<tr><td>id_notification</td><td>SERIAL</td><td>Clé primaire</td></tr>
+<tr><td>date_envoi</td><td>TIMESTAMP</td><td>Date de l'envoi</td></tr>
+<tr><td>type_notification</td><td>ENUM</td><td>absence, rappel</td></tr>
+<tr><td>statut_envoi</td><td>ENUM</td><td>envoyé, échec, en attente</td></tr>
+<tr><td>id_etudiant</td><td>INT</td><td>Référence à l'étudiant (FK)</td></tr>
+<tr><td>id_presence</td><td>INT</td><td>Référence à la ligne de présence (FK)</td></tr>
+</table>
+
+<script>
+    mermaid.initialize({ 
+        startOnLoad: true,
+        theme: 'default',
+        securityLevel: 'loose',
+        er: {
+            diagramPadding: 20,
+            entityPadding: 15,
+            stroke: '#3498db',
+            fill: '#ecf0f1'
+        }
+    });
+</script>
+
+</body>
+</html>
